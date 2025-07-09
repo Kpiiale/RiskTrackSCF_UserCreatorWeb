@@ -1,0 +1,22 @@
+﻿@page "/create-company"
+@using RiskTrackSCF_UserCreatorWeb.Services
+@inject ApiService Api
+@using RiskTrackSCF_UserCreatorWeb.Models
+
+<h3>Create Company</h3>
+
+<input @bind="company.Name" placeholder="Name" />
+<input @bind="company.RUC" placeholder="RUC" />
+<input @bind="company.Sector" placeholder="Sector" />
+
+<button @onclick="Create">Create Company</button>
+
+@code {
+    private Company company = new();
+
+    private async Task Create()
+    {
+        await Api.CreateCompanyAsync(company);
+        company = new(); 
+    }
+}
