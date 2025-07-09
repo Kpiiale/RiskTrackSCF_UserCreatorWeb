@@ -1,10 +1,23 @@
 using RiskTrackSCF_UserCreatorWeb.Components;
+using RiskTrackSCF_UserCreatorWeb.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddScoped<HttpClient>(sp =>
+{
+    var navigationManager = sp.GetRequiredService<Microsoft.AspNetCore.Components.NavigationManager>();
+    return new HttpClient
+    {
+        BaseAddress = new Uri("http://localhost:5193")
+    };
+});
+
+builder.Services.AddScoped<ApiService>();
+
 
 var app = builder.Build();
 
