@@ -1,0 +1,71 @@
+﻿@page "/manage-users"
+@using RiskTrackSCF_UserCreatorWeb.Services
+@inject ApiService Api
+@using RiskTrackSCF_UserCreatorWeb.Models
+
+<h3>Manage Users</h3>
+
+<input class="form-control my-2" placeholder="Username" @bind="newUser.Username" />
+<input class="form-control my-2" placeholder="Email" @bind="newUser.Email" />
+<input class="form-control my-2" placeholder="Password" @bind="newUser.Password" type="password" />
+<select class="form-control my-2" @bind="newUser.CompanyId">
+    <option value="">Select Company</option>
+    @foreach (var company in companies)
+    {
+        <option value="@company.CompanyId">@company.Name</option>
+    }
+</select>
+
+<button class="btn btn-primary mb-3" @onclick="CreateUser">Add User</button>
+
+@if (users is not null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Company</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.Username</td>
+                    <td>@user.Email</td>
+                    <td>@companies.FirstOrDefault(c => c.CompanyId == user.CompanyId)?.Name</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteUser(user.UserId)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<User> users = [];
+    private List<Company> companies = [];
+    private User newUser = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = await Api.GetUsersAsync();
+        companies = await Api.GetCompaniesAsync();
+    }
+
+    private async Task CreateUser()
+    {
+        await Api.CreateUserAsync(newUser);
+        newUser = new();
+        users = await Api.GetUsersAsync();
+    }
+
+    private async Task DeleteUser(int id)
+    {
+        await Api.DeleteUserAsync(id);
+        users = await Api.GetUsersAsync();
+    }
+}

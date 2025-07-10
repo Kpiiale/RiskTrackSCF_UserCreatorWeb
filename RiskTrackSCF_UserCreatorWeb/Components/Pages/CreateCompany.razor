@@ -3,20 +3,45 @@
 @inject ApiService Api
 @using RiskTrackSCF_UserCreatorWeb.Models
 
-<h3>Create Company</h3>
+<h3>Manage Companies</h3>
 
-<input @bind="company.Name" placeholder="Name" />
-<input @bind="company.RUC" placeholder="RUC" />
-<input @bind="company.Sector" placeholder="Sector" />
+<input class="form-control my-2" placeholder="Name" @bind="newCompany.Name" />
+<input class="form-control my-2" placeholder="RUC" @bind="newCompany.RUC" />
+<input class="form-control my-2" placeholder="Sector" @bind="newCompany.Sector" />
+<button class="btn btn-primary mb-3" @onclick="AddCompany">Add Company</button>
 
-<button @onclick="Create">Create Company</button>
+@if (companies is not null)
+{
+    <ul class="list-group">
+        @foreach (var c in companies)
+        {
+            <li class="list-group-item d-flex justify-content-between">
+                <span>@c.Name (@c.RUC) - @c.Sector</span>
+                <button class="btn btn-danger btn-sm" @onclick="() => DeleteCompany(c.CompanyId)">Delete</button>
+            </li>
+        }
+    </ul>
+}
 
 @code {
-    private Company company = new();
+    private List<Company> companies = [];
+    private Company newCompany = new();
 
-    private async Task Create()
+    protected override async Task OnInitializedAsync()
     {
-        await Api.CreateCompanyAsync(company);
-        company = new(); 
+        companies = await Api.GetCompaniesAsync();
+    }
+
+    private async Task AddCompany()
+    {
+        await Api.CreateCompanyAsync(newCompany);
+        newCompany = new();
+        companies = await Api.GetCompaniesAsync();
+    }
+
+    private async Task DeleteCompany(int id)
+    {
+        await Api.DeleteCompanyAsync(id);
+        companies = await Api.GetCompaniesAsync();
     }
 }
