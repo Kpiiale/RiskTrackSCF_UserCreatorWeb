@@ -17,6 +17,8 @@ builder.Services.AddScoped<HttpClient>(sp =>
 });
 
 builder.Services.AddScoped<ApiService>();
+builder.Services.AddScoped<AuthService>();
+
 
 
 var app = builder.Build();

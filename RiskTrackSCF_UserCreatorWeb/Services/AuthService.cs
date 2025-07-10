@@ -14,6 +14,7 @@ namespace RiskTrackSCF_UserCreatorWeb.Services
         {
             CurrentUser = new UserSession
             {
+                UserId = user.UserId,
                 Username = user.Username,
                 Role = user.Role
             };
